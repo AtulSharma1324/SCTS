@@ -1,0 +1,44 @@
+# Large Maven and tooling downloads
+apache-maven-3.9.6/
+maven.zip
+h2.jar
+
+# Log and diagnostic files
+backend_startup_debug.log
+java_search.txt
+search_java.ps1
+search.bat
+mvn_err.txt
+mvn_out.txt
+run.log
+run.txt
+
+# Java / Spring Boot outputs
+backend/target/
+*.class
+
+# Next.js frontend outputs
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local Env Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

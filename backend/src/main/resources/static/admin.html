@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0f172a;color:#f8fafc;display:flex;min-height:100vh}
+.sidebar{width:260px;background:rgba(30,41,59,.8);backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:10}
+.sidebar .logo{padding:1.5rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar .logo .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center}
+.sidebar .logo .ic i{color:#fff;font-size:1.1rem}.sidebar .logo span{font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav{flex:1;padding:1rem .75rem;overflow-y:auto}.nav a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:12px;color:#94a3b8;text-decoration:none;font-weight:500;font-size:.9rem;margin-bottom:4px;transition:all .2s;border:1px solid transparent}
+.nav a:hover,.nav a.active{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(139,92,246,.15));color:#60a5fa;border-color:rgba(59,130,246,.3)}
+.nav a i{width:20px;text-align:center}.user-box{padding:1rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+.user-box .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+.user-box .info{flex:1}.user-box .info .name{font-size:.85rem;font-weight:600}.user-box .info .role{font-size:.7rem;color:#64748b}
+.main{flex:1;margin-left:260px;position:relative;overflow-x:hidden}
+.header{padding:1.5rem 2rem;background:rgba(30,41,59,.6);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.header h2{font-size:1.5rem;font-weight:700}.header .actions{display:flex;gap:1rem;align-items:center}
+.btn-gen{padding:.6rem 1.5rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;font-family:'Inter';font-size:.85rem;box-shadow:0 4px 15px rgba(59,130,246,.3);transition:all .2s}
+.btn-gen:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(59,130,246,.4)}
+.content{padding:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:2rem}
+.stat-card{background:rgba(30,41,59,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem;transition:all .3s;position:relative;overflow:hidden}
+.stat-card:hover{border-color:rgba(59,130,246,.4);transform:translateY(-2px)}.stat-card .label{font-size:.8rem;color:#94a3b8;font-weight:500}
+.stat-card .val{font-size:2rem;font-weight:800;margin-top:.5rem}.stat-card .icon{position:absolute;top:1rem;right:1rem;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;color:#64748b}
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.card{background:rgba(30,41,59,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.card h3 i{color:#3b82f6}
+table{width:100%;border-collapse:collapse}th,td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);font-size:.85rem}
+th{color:#94a3b8;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
+.badge{padding:.25rem .75rem;border-radius:20px;font-size:.7rem;font-weight:600}
+.badge-high{background:rgba(239,68,68,.15);color:#f87171}.badge-med{background:rgba(245,158,11,.15);color:#fbbf24}.badge-low{background:rgba(34,197,94,.15);color:#4ade80}
+.section{display:none}.section.active{display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-row input,.form-row select{width:100%;padding:.7rem 1rem;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f8fafc;font-family:'Inter';font-size:.85rem;outline:none}
+.form-row input:focus,.form-row select:focus{border-color:#3b82f6}
+.btn-add{padding:.6rem 1.5rem;background:#3b82f6;border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-family:'Inter';font-size:.85rem}
+.btn-del{background:none;border:none;color:#f87171;cursor:pointer;font-size:.9rem}
+.btn-del:hover{color:#ef4444}
+.heatmap{display:grid;grid-template-columns:80px repeat(7,1fr);gap:4px}.hm-cell{padding:.5rem;border-radius:8px;text-align:center;font-size:.7rem;font-weight:600}
+.hm-free{background:rgba(34,197,94,.15);color:#4ade80}.hm-low{background:rgba(59,130,246,.15);color:#60a5fa}.hm-med{background:rgba(245,158,11,.15);color:#fbbf24}.hm-high{background:rgba(239,68,68,.15);color:#f87171}
+.hm-header{background:rgba(255,255,255,.05);color:#94a3b8}
+.rec-item{padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:.75rem}
+.rec-item h4{font-size:.85rem;font-weight:600;margin-bottom:.25rem}.rec-item p{font-size:.8rem;color:#94a3b8}
+.rec-item .rec-badge{float:right}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.2;pointer-events:none}
+.orb1{width:400px;height:400px;background:#3b82f6;top:-100px;right:-100px}.orb2{width:300px;height:300px;background:#8b5cf6;bottom:-50px;left:200px}
+</style></head><body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<aside class="sidebar">
+<div class="logo"><div class="ic"><i class="fas fa-brain"></i></div><span>SmartClass AI</span></div>
+<nav class="nav">
+<a href="#" class="active" onclick="show('dashboard')"><i class="fas fa-columns"></i>Dashboard</a>
+<a href="#" onclick="show('teachers')"><i class="fas fa-chalkboard-teacher"></i>Teachers</a>
+<a href="#" onclick="show('students')"><i class="fas fa-user-graduate"></i>Students</a>
+<a href="#" onclick="show('classrooms')"><i class="fas fa-school"></i>Classrooms</a>
+<a href="#" onclick="show('subjects')"><i class="fas fa-book"></i>Subjects</a>
+<a href="#" onclick="show('timetable')"><i class="fas fa-calendar-alt"></i>Timetable</a>
+<a href="#" onclick="show('aiinsights')"><i class="fas fa-brain"></i>AI Insights</a>
+<a href="#" onclick="show('analytics')"><i class="fas fa-chart-line"></i>Analytics</a>
+</nav>
+<div class="user-box"><div class="avatar" id="uAvatar">A</div><div class="info"><div class="name" id="uName">Admin</div><div class="role">Administrator</div></div>
+<i class="fas fa-sign-out-alt" style="color:#64748b;cursor:pointer" onclick="logout()"></i></div>
+</aside>
+<div class="main">
+<div class="header"><h2 id="pageTitle">Dashboard</h2><div class="actions"><button class="btn-gen" onclick="genSchedule()"><i class="fas fa-magic"></i> Generate Smart Timetable</button><button class="btn-gen" style="background:linear-gradient(135deg,#f59e0b,#ef4444)" onclick="resolveConflicts()"><i class="fas fa-wrench"></i> AI Resolve Conflicts</button></div></div>
+<div class="content">
+
+<!-- Dashboard -->
+<div class="section active" id="sec-dashboard">
+<div class="stats"><div class="stat-card"><div class="label">Total Students</div><div class="val" id="s-stu">0</div><div class="icon"><i class="fas fa-user-graduate"></i></div></div>
+<div class="stat-card"><div class="label">Active Teachers</div><div class="val" id="s-tea">0</div><div class="icon"><i class="fas fa-chalkboard-teacher"></i></div></div>
+<div class="stat-card"><div class="label">Available Rooms</div><div class="val" id="s-room">0</div><div class="icon"><i class="fas fa-door-open"></i></div></div>
+<div class="stat-card"><div class="label">Attendance %</div><div class="val" id="s-att">0%</div><div class="icon"><i class="fas fa-chart-bar"></i></div></div></div>
+<div class="grid-2"><div class="card"><h3><i class="fas fa-chart-area"></i>Classroom Occupancy</h3><canvas id="occChart" height="200"></canvas></div>
+<div class="card"><h3><i class="fas fa-lightbulb"></i>AI Recommendations</h3><div id="recList"></div></div></div>
+<div class="card"><h3><i class="fas fa-fire"></i>Classroom Heatmap</h3><div id="heatmapGrid" class="heatmap"></div></div>
+</div>
+
+<!-- Teachers -->
+<div class="section" id="sec-teachers">
+<div class="card" style="margin-bottom:1.5rem"><h3><i class="fas fa-plus"></i>Add Teacher</h3>
+<form onsubmit="addTeacher(event)"><div class="form-row">
+<input id="tn" placeholder="Name" required><input id="te" placeholder="Email" required><input id="td" placeholder="Department" required>
+</div><div class="form-row"><input id="ts" placeholder="Specialization"><input id="tp" placeholder="Phone"><button type="submit" class="btn-add">Add Teacher</button></div></form></div>
+<div class="card"><h3><i class="fas fa-list"></i>All Teachers</h3><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Specialization</th><th></th></tr></thead><tbody id="tList"></tbody></table></div>
+</div>
+
+<!-- Students -->
+<div class="section" id="sec-students">
+<div class="card" style="margin-bottom:1.5rem"><h3><i class="fas fa-plus"></i>Add Student</h3>
+<form onsubmit="addStudent(event)"><div class="form-row">
+<input id="sn" placeholder="Name" required><input id="se" placeholder="Email" required><input id="sg" placeholder="Grade" required>
+</div><div class="form-row"><input id="ss" placeholder="Section"><input id="sd" placeholder="Department"><button type="submit" class="btn-add">Add Student</button></div></form></div>
+<div class="card"><h3><i class="fas fa-list"></i>All Students</h3><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Grade</th><th>Section</th><th>Dept</th><th></th></tr></thead><tbody id="sList"></tbody></table></div>
+</div>
+
+<!-- Classrooms -->
+<div class="section" id="sec-classrooms">
+<div class="card" style="margin-bottom:1.5rem"><h3><i class="fas fa-plus"></i>Add Classroom</h3>
+<form onsubmit="addClassroom(event)"><div class="form-row">
+<input id="cn" placeholder="Room Name" required><input id="cc" placeholder="Capacity" type="number" required>
+<select id="ct"><option value="LECTURE">Lecture</option><option value="LAB">Lab</option><option value="SEMINAR">Seminar</option></select>
+</div><div class="form-row"><input id="cb" placeholder="Building"><input id="cf" placeholder="Floor" type="number"><button type="submit" class="btn-add">Add Room</button></div></form></div>
+<div class="card"><h3><i class="fas fa-list"></i>All Classrooms</h3><table><thead><tr><th>ID</th><th>Name</th><th>Capacity</th><th>Type</th><th>Building</th><th>Floor</th><th></th></tr></thead><tbody id="cList"></tbody></table></div>
+</div>
+
+<!-- Subjects -->
+<div class="section" id="sec-subjects">
+<div class="card" style="margin-bottom:1.5rem"><h3><i class="fas fa-plus"></i>Add Subject</h3>
+<form onsubmit="addSubject(event)"><div class="form-row">
+<input id="sjn" placeholder="Subject Name" required><input id="sjc" placeholder="Code" required><input id="sjd" placeholder="Department" required>
+</div><div class="form-row"><input id="sjcr" placeholder="Credits" type="number"><button type="submit" class="btn-add">Add Subject</button></div></form></div>
+<div class="card"><h3><i class="fas fa-list"></i>All Subjects</h3><table><thead><tr><th>ID</th><th>Name</th><th>Code</th><th>Department</th><th>Credits</th><th></th></tr></thead><tbody id="sjList"></tbody></table></div>
+</div>
+
+<!-- Timetable -->
+<div class="section" id="sec-timetable">
+<div class="card"><h3><i class="fas fa-calendar"></i>Generated Timetable</h3><table><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Room</th><th>Grade</th><th>Sec</th></tr></thead><tbody id="ttList"></tbody></table></div>
+</div>
+
+<!-- AI Insights -->
+<div class="section" id="sec-aiinsights">
+<div class="grid-2">
+<div class="card"><h3><i class="fas fa-brain"></i>AI Stress Detection</h3><div id="stressList"></div></div>
+<div class="card"><h3><i class="fas fa-crystal-ball"></i>Schedule Predictions</h3><div id="predList"></div></div>
+</div></div>
+
+<!-- Analytics -->
+<div class="section" id="sec-analytics">
+<div class="grid-2"><div class="card"><h3><i class="fas fa-chart-bar"></i>Teacher Workload</h3><canvas id="workloadChart" height="200"></canvas></div>
+<div class="card"><h3><i class="fas fa-chart-pie"></i>Subject Distribution</h3><canvas id="subjectChart" height="200"></canvas></div></div>
+<div class="grid-2"><div class="card"><h3><i class="fas fa-calendar-week"></i>Classes Per Day</h3><canvas id="dayChart" height="200"></canvas></div>
+<div class="card"><h3><i class="fas fa-building"></i>Students by Department</h3><canvas id="deptChart" height="200"></canvas></div></div>
+</div>
+
+</div></div>
+<script>
+const API='/api/admin';const AI='/api/ai';
+let occChartInst,attChartInst,pieChartInst;
+if(!localStorage.getItem('token')||localStorage.getItem('userRole')!=='ADMIN'){window.location.href='/';}
+document.getElementById('uName').textContent=localStorage.getItem('userName')||'Admin';
+document.getElementById('uAvatar').textContent=(localStorage.getItem('userName')||'A')[0];
+
+function logout(){localStorage.clear();window.location.href='/';}
+function show(s){
+  document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));
+  document.getElementById('sec-'+s).classList.add('active');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+  event.target.closest('a').classList.add('active');
+  const titles={dashboard:'Dashboard',teachers:'Teachers',students:'Students',classrooms:'Classrooms',subjects:'Subjects',timetable:'Timetable',aiinsights:'AI Insights',analytics:'Analytics'};
+  document.getElementById('pageTitle').textContent=titles[s]||s;
+  if(s==='dashboard')loadDashboard();if(s==='teachers')loadTeachers();if(s==='students')loadStudents();
+  if(s==='classrooms')loadClassrooms();if(s==='subjects')loadSubjects();if(s==='timetable')loadTimetable();
+  if(s==='aiinsights')loadAI();if(s==='analytics')loadAnalytics();
+}
+async function loadDashboard(){
+  const d=await fetch(API+'/dashboard').then(r=>r.json());
+  document.getElementById('s-stu').textContent=d.totalStudents;document.getElementById('s-tea').textContent=d.totalTeachers;
+  document.getElementById('s-room').textContent=d.availableRooms+'/'+d.totalClassrooms;document.getElementById('s-att').textContent=d.attendancePercentage+'%';
+  const recs=await fetch(API+'/recommendations').then(r=>r.json());
+  document.getElementById('recList').innerHTML=recs.map(r=>`<div class="rec-item"><span class="badge rec-badge ${r.priority==='HIGH'?'badge-high':r.priority==='MEDIUM'?'badge-med':'badge-low'}">${r.priority}</span><h4>${r.title}</h4><p>${r.message}</p></div>`).join('');
+  loadHeatmap();loadOccChart();
+}
+async function loadOccChart(){
+  const data=[40,85,95,60,30,15,5];const labels=['8AM','9AM','10AM','11AM','12PM','2PM','4PM'];
+  if(occChartInst)occChartInst.destroy();
+  occChartInst=new Chart(document.getElementById('occChart'),{type:'line',data:{labels,datasets:[{label:'Occupancy %',data,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.1)',fill:true,tension:.4,borderWidth:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}},x:{ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}}}}});
+}
+async function loadHeatmap(){
+  const hm=await fetch(AI+'/heatmap').then(r=>r.json());
+  const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];const hours=['09:00','10:00','11:00','12:00','14:00','15:00','16:00'];
+  let html='<div class="hm-cell hm-header"></div>';hours.forEach(h=>html+=`<div class="hm-cell hm-header">${h}</div>`);
+  days.forEach(d=>{html+=`<div class="hm-cell hm-header">${d.substring(0,3)}</div>`;hours.forEach(h=>{const c=hm.find(x=>x.day===d&&x.hour===h);const lv=c?c.level:'free';html+=`<div class="hm-cell hm-${lv}">${c?c.count:0}</div>`;});});
+  document.getElementById('heatmapGrid').innerHTML=html;
+}
+async function loadTeachers(){const d=await fetch(API+'/teachers').then(r=>r.json());document.getElementById('tList').innerHTML=d.map(t=>`<tr><td>${t.id}</td><td>${t.name}</td><td>${t.email}</td><td>${t.department}</td><td>${t.specialization||''}</td><td><button class="btn-del" onclick="del('teachers',${t.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');}
+async function addTeacher(e){e.preventDefault();await fetch(API+'/teachers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:tn.value,email:te.value,department:td.value,specialization:ts.value,phone:tp.value})});e.target.reset();loadTeachers();}
+async function loadStudents(){const d=await fetch(API+'/students').then(r=>r.json());document.getElementById('sList').innerHTML=d.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.email}</td><td>${s.grade}</td><td>${s.section||''}</td><td>${s.department||''}</td><td><button class="btn-del" onclick="del('students',${s.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');}
+async function addStudent(e){e.preventDefault();await fetch(API+'/students',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:sn.value,email:se.value,grade:sg.value,section:ss.value,department:sd.value})});e.target.reset();loadStudents();}
+async function loadClassrooms(){const d=await fetch(API+'/classrooms').then(r=>r.json());document.getElementById('cList').innerHTML=d.map(c=>`<tr><td>${c.id}</td><td>${c.name}</td><td>${c.capacity}</td><td>${c.roomType}</td><td>${c.building||''}</td><td>${c.floor||''}</td><td><button class="btn-del" onclick="del('classrooms',${c.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');}
+async function addClassroom(e){e.preventDefault();await fetch(API+'/classrooms',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:cn.value,capacity:parseInt(cc.value),roomType:ct.value,building:cb.value,floor:parseInt(cf.value),available:true})});e.target.reset();loadClassrooms();}
+async function loadSubjects(){const d=await fetch(API+'/subjects').then(r=>r.json());document.getElementById('sjList').innerHTML=d.map(s=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.code}</td><td>${s.department}</td><td>${s.credits}</td><td><button class="btn-del" onclick="del('subjects',${s.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');}
+async function addSubject(e){e.preventDefault();await fetch(API+'/subjects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:sjn.value,code:sjc.value,department:sjd.value,credits:parseInt(sjcr.value)})});e.target.reset();loadSubjects();}
+async function loadTimetable(){const d=await fetch(API+'/timetable').then(r=>r.json());document.getElementById('ttList').innerHTML=d.map(t=>`<tr><td>${t.dayOfWeek}</td><td>${t.startTime}-${t.endTime}</td><td>${t.subjectName}</td><td>${t.teacherName}</td><td>${t.classroomName}</td><td>${t.grade}</td><td>${t.section}</td></tr>`).join('');}
+async function del(type,id){await fetch(API+'/'+type+'/'+id,{method:'DELETE'});if(type==='teachers')loadTeachers();if(type==='students')loadStudents();if(type==='classrooms')loadClassrooms();if(type==='subjects')loadSubjects();}
+async function genSchedule(){const btn=event.target.closest('button');btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Generating...';const r=await fetch(AI+'/generateSchedule',{method:'POST'}).then(r=>r.json());btn.innerHTML='<i class="fas fa-check"></i> '+r.totalEntries+' entries created';setTimeout(()=>{btn.innerHTML='<i class="fas fa-magic"></i> Generate Smart Timetable';},3000);loadDashboard();}
+async function resolveConflicts(){const btn=event.target.closest('button');btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Resolving...';const r=await fetch(AI+'/resolveConflicts',{method:'POST'}).then(r=>r.json());let msg=r.resolved+' resolved, '+r.totalIssues+' total issues';btn.innerHTML='<i class="fas fa-check"></i> '+msg;if(r.details&&r.details.length>0){alert('AI Conflict Resolution Report:\n\n'+r.details.map(d=>d.status+': '+d.description).join('\n'));}else{alert('No conflicts found! Schedule is optimal.');}setTimeout(()=>{btn.innerHTML='<i class="fas fa-wrench"></i> AI Resolve Conflicts';},4000);loadDashboard();}
+async function loadAI(){
+  const stress=await fetch(AI+'/stress').then(r=>r.json());
+  document.getElementById('stressList').innerHTML=stress.map(s=>`<div class="rec-item"><span class="badge rec-badge ${s.stressLevel==='HIGH'?'badge-high':s.stressLevel==='MEDIUM'?'badge-med':'badge-low'}">${s.stressLevel}</span><h4>${s.teacher}</h4><p>${s.totalClasses} classes - ${s.recommendation}</p></div>`).join('')||'<p style="color:#64748b">Generate a timetable first to see stress analytics</p>';
+  const pred=await fetch(AI+'/predictSchedule',{method:'POST'}).then(r=>r.json());
+  document.getElementById('predList').innerHTML=`<div class="rec-item"><h4>Predicted Conflicts: ${pred.predictedConflicts}</h4><p>Optimizations: ${pred.suggestedOptimizations}</p></div><div class="rec-item"><h4>Workload Balance: ${pred.workloadBalance}</h4><p>Room Utilization: ${pred.roomUtilization}</p></div>`+(pred.recommendations||[]).map(r=>`<div class="rec-item"><p>${r}</p></div>`).join('');
+}
+let wkChart,sjChart,dayChInst,dptChart;
+async function loadAnalytics(){
+  if(wkChart)wkChart.destroy();if(sjChart)sjChart.destroy();if(dayChInst)dayChInst.destroy();if(dptChart)dptChart.destroy();
+  const d=await fetch(AI+'/analytics').then(r=>r.json());
+  const wl=d.teacherWorkload||[];const sj=d.subjectDistribution||[];const dd=d.dayDistribution||{};const ds=d.departmentStudents||{};
+  const colors=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ec4899','#06b6d4','#ef4444','#84cc16','#a855f7','#f97316'];
+  wkChart=new Chart(document.getElementById('workloadChart'),{type:'bar',data:{labels:wl.map(w=>w.name.split(' ').pop()),datasets:[{label:'Classes',data:wl.map(w=>w.classes),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#94a3b8'},grid:{display:false}}}}});
+  sjChart=new Chart(document.getElementById('subjectChart'),{type:'doughnut',data:{labels:sj.map(s=>s.name),datasets:[{data:sj.map(s=>s.count),backgroundColor:colors,borderWidth:0}]},options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}}}});
+  const dayLabels=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  dayChInst=new Chart(document.getElementById('dayChart'),{type:'bar',data:{labels:dayLabels.map(d=>d.substring(0,3)),datasets:[{label:'Classes',data:dayLabels.map(d=>dd[d]||0),backgroundColor:colors.slice(0,5),borderRadius:8}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}},x:{ticks:{color:'#64748b'},grid:{display:false}}}}});
+  const deptLabels=Object.keys(ds);const deptVals=Object.values(ds);
+  dptChart=new Chart(document.getElementById('deptChart'),{type:'doughnut',data:{labels:deptLabels,datasets:[{data:deptVals,backgroundColor:['#3b82f6','#8b5cf6','#10b981','#f59e0b'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8'}}}}});
+}
+loadDashboard();
+</script></body></html>

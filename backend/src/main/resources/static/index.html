@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Classroom - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#f8fafc;min-height:100vh;display:flex;overflow:hidden}
+.bg-orbs{position:fixed;inset:0;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.4;animation:float 8s ease-in-out infinite}
+.orb-1{width:400px;height:400px;background:#3b82f6;top:-10%;left:-5%;animation-delay:0s}
+.orb-2{width:350px;height:350px;background:#8b5cf6;bottom:-10%;right:-5%;animation-delay:2s}
+.orb-3{width:300px;height:300px;background:#06b6d4;top:50%;left:50%;animation-delay:4s}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+.left-panel{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4rem;position:relative;z-index:1}
+.left-panel h1{font-size:3rem;font-weight:900;line-height:1.1;margin-bottom:1.5rem}
+.left-panel h1 span{background:linear-gradient(135deg,#3b82f6,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.left-panel p{font-size:1.1rem;color:#94a3b8;max-width:500px;line-height:1.7}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem;max-width:500px}
+.feature{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:12px;background:rgba(30,41,59,.6);border:1px solid rgba(255,255,255,.08)}
+.feature i{color:#3b82f6;font-size:1.1rem;width:20px;text-align:center}
+.feature span{font-size:.85rem;color:#cbd5e1}
+.right-panel{width:480px;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;z-index:1}
+.auth-card{width:100%;background:rgba(30,41,59,.8);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:3rem;box-shadow:0 25px 50px rgba(0,0,0,.5)}
+.auth-card .logo{display:flex;align-items:center;gap:.75rem;margin-bottom:2rem}
+.auth-card .logo .icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(59,130,246,.4)}
+.auth-card .logo .icon i{font-size:1.3rem;color:#fff}
+.auth-card .logo span{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-card h2{font-size:1.6rem;font-weight:700;margin-bottom:.5rem}
+.auth-card .sub{color:#94a3b8;font-size:.9rem;margin-bottom:2rem}
+.tabs{display:flex;gap:0;margin-bottom:2rem;background:rgba(15,23,42,.5);border-radius:12px;padding:4px;border:1px solid rgba(255,255,255,.05)}
+.tab{flex:1;padding:.65rem;text-align:center;border-radius:10px;cursor:pointer;font-weight:600;font-size:.85rem;color:#94a3b8;transition:all .3s}
+.tab.active{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;box-shadow:0 4px 15px rgba(59,130,246,.4)}
+.form-group{margin-bottom:1.25rem}
+.form-group label{display:block;font-size:.8rem;font-weight:600;color:#94a3b8;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px}
+.form-group .input-wrap{position:relative}
+.form-group input,.form-group select{width:100%;padding:.85rem 1rem .85rem 2.75rem;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:#f8fafc;font-size:.9rem;font-family:'Inter',sans-serif;transition:all .3s;outline:none}
+.form-group select{padding-left:2.75rem;appearance:none;cursor:pointer}
+.form-group input:focus,.form-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.form-group .input-wrap i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#64748b;font-size:.9rem}
+.submit-btn{width:100%;padding:.9rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;box-shadow:0 8px 25px rgba(59,130,246,.35);margin-top:.5rem}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(59,130,246,.5)}
+.submit-btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
+.error-msg{color:#f87171;font-size:.8rem;margin-top:.5rem;display:none}
+.demo-creds{margin-top:1.5rem;padding:1rem;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:12px}
+.demo-creds h4{font-size:.75rem;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem}
+.demo-creds p{font-size:.75rem;color:#94a3b8;line-height:1.6}
+.demo-creds span{color:#e2e8f0;font-weight:500}
+@media(max-width:900px){body{flex-direction:column}.left-panel{padding:2rem}.right-panel{width:100%;padding:1.5rem}}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+
+<div class="left-panel">
+    <div style="max-width:550px">
+        <h1><span>Next Generation</span><br>Smart Classroom<br>Ecosystem</h1>
+        <p>AI-powered scheduling, predictive analytics and intelligent classroom management. Experience the future of education technology.</p>
+        <div class="features">
+            <div class="feature"><i class="fas fa-brain"></i><span>AI Scheduling</span></div>
+            <div class="feature"><i class="fas fa-chart-line"></i><span>Smart Analytics</span></div>
+            <div class="feature"><i class="fas fa-bell"></i><span>Smart Alerts</span></div>
+            <div class="feature"><i class="fas fa-shield-alt"></i><span>Role-Based Access</span></div>
+            <div class="feature"><i class="fas fa-microphone"></i><span>Voice Assistant</span></div>
+            <div class="feature"><i class="fas fa-fire"></i><span>Heatmap Dashboard</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="right-panel">
+    <div class="auth-card">
+        <div class="logo">
+            <div class="icon"><i class="fas fa-brain"></i></div>
+            <span>SmartClass AI</span>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">Sign In</div>
+            <div class="tab" onclick="switchTab('register')">Sign Up</div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <h2>Welcome Back</h2>
+            <p class="sub">Sign in to access your dashboard</p>
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrap"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="you@smart.edu" required></div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Enter password" required></div>
+            </div>
+            <div id="loginError" class="error-msg"></div>
+            <button type="submit" class="submit-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+            <div class="demo-creds">
+                <h4>Demo Accounts</h4>
+                <p><span>Admin:</span> admin@smart.edu / admin123<br><span>Teacher:</span> sarah@smart.edu / teacher123<br><span>Student:</span> atul@smart.edu / student123</p>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+            <h2>Create Account</h2>
+            <p class="sub">Join the smart classroom ecosystem</p>
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-wrap"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Your full name" required></div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrap"><i class="fas fa-envelope"></i><input type="email" id="regEmail" placeholder="you@smart.edu" required></div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="Create password" required></div>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <div class="input-wrap"><i class="fas fa-user-tag"></i>
+                    <select id="regRole"><option value="STUDENT">Student</option><option value="TEACHER">Teacher</option><option value="ADMIN">Admin</option></select>
+                </div>
+            </div>
+            <div id="regError" class="error-msg"></div>
+            <button type="submit" class="submit-btn" id="regBtn"><i class="fas fa-user-plus"></i> Create Account</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach((t,i) => {
+        t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1));
+    });
+    document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+    document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const errEl = document.getElementById('loginError');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+    errEl.style.display = 'none';
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value})
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userEmail', data.email);
+        localStorage.setItem('userRole', data.role);
+        if (data.role === 'ADMIN') window.location.href = '/admin.html';
+        else if (data.role === 'TEACHER') window.location.href = '/teacher.html';
+        else window.location.href = '/student.html';
+    } catch(err) {
+        errEl.textContent = err.message; errEl.style.display = 'block';
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+    }
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const btn = document.getElementById('regBtn');
+    const errEl = document.getElementById('regError');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+    errEl.style.display = 'none';
+    try {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                role: document.getElementById('regRole').value
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userName', data.name);
+        localStorage.setItem('userEmail', data.email);
+        localStorage.setItem('userRole', data.role);
+        if (data.role === 'ADMIN') window.location.href = '/admin.html';
+        else if (data.role === 'TEACHER') window.location.href = '/teacher.html';
+        else window.location.href = '/student.html';
+    } catch(err) {
+        errEl.textContent = err.message; errEl.style.display = 'block';
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+    }
+}
+
+// Auto-redirect if already logged in
+if (localStorage.getItem('token')) {
+    const role = localStorage.getItem('userRole');
+    if (role === 'ADMIN') window.location.href = '/admin.html';
+    else if (role === 'TEACHER') window.location.href = '/teacher.html';
+    else if (role === 'STUDENT') window.location.href = '/student.html';
+}
+</script>
+</body>
+</html>

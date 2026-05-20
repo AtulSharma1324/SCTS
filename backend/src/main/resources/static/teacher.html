@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Teacher Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0f172a;color:#f8fafc;display:flex;min-height:100vh}
+.sidebar{width:260px;background:rgba(30,41,59,.8);backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;position:fixed;height:100vh}
+.sidebar .logo{padding:1.5rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar .logo .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center}
+.sidebar .logo .ic i{color:#fff}.sidebar .logo span{font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav{flex:1;padding:1rem .75rem}.nav a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:12px;color:#94a3b8;text-decoration:none;font-weight:500;font-size:.9rem;margin-bottom:4px;transition:all .2s;border:1px solid transparent}
+.nav a:hover,.nav a.active{background:rgba(16,185,129,.12);color:#34d399;border-color:rgba(16,185,129,.3)}
+.nav a i{width:20px;text-align:center}
+.user-box{padding:1rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+.user-box .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+.user-box .info .name{font-size:.85rem;font-weight:600}.user-box .info .role{font-size:.7rem;color:#64748b}
+.main{flex:1;margin-left:260px}.header{padding:1.5rem 2rem;background:rgba(30,41,59,.6);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.header h2{font-size:1.5rem;font-weight:700}.content{padding:2rem}
+.card{background:rgba(30,41,59,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.card h3 i{color:#10b981}
+.section{display:none}.section.active{display:block}
+.tt-grid{display:grid;grid-template-columns:100px repeat(5,1fr);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+.tt-cell{padding:.6rem;border:1px solid rgba(255,255,255,.05);font-size:.75rem;min-height:60px;display:flex;flex-direction:column;justify-content:center}
+.tt-header{background:rgba(16,185,129,.1);color:#34d399;font-weight:700;text-align:center;font-size:.8rem}
+.tt-time{background:rgba(255,255,255,.03);color:#94a3b8;font-weight:600;text-align:center;font-size:.75rem}
+.tt-class{background:rgba(16,185,129,.08);border-radius:8px;padding:.4rem;margin:2px}
+.tt-class .subj{font-weight:600;color:#e2e8f0;font-size:.75rem}.tt-class .room{color:#64748b;font-size:.65rem;margin-top:2px}
+.tt-empty{color:#334155;text-align:center;font-size:.7rem}
+.att-section{margin-top:1rem}
+.att-filters{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:end}
+.att-filters .fg{display:flex;flex-direction:column;gap:.4rem}
+.att-filters label{font-size:.75rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.att-filters select,.att-filters input{padding:.6rem 1rem;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f8fafc;font-family:'Inter';font-size:.85rem;outline:none;min-width:160px}
+.att-filters select:focus,.att-filters input:focus{border-color:#10b981}
+.btn-load{padding:.6rem 1.5rem;background:#10b981;border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-family:'Inter';font-size:.85rem;height:fit-content;align-self:end}
+.btn-load:hover{background:#059669}
+.btn-submit{padding:.7rem 2rem;background:linear-gradient(135deg,#10b981,#06b6d4);border:none;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;font-family:'Inter';font-size:.9rem;margin-top:1rem;box-shadow:0 4px 15px rgba(16,185,129,.3)}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(16,185,129,.4)}
+.stu-table{width:100%;border-collapse:collapse;margin-top:1rem}
+.stu-table th,.stu-table td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);font-size:.85rem}
+.stu-table th{color:#94a3b8;font-weight:600;font-size:.75rem;text-transform:uppercase}
+.stu-table tr:hover{background:rgba(255,255,255,.02)}
+.checkbox-wrap{display:flex;align-items:center;justify-content:center}
+.checkbox-wrap input[type="checkbox"]{width:20px;height:20px;accent-color:#10b981;cursor:pointer}
+.present-tag{color:#4ade80;font-weight:600}.absent-tag{color:#f87171;font-weight:600}
+.rec-item{padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:.75rem}
+.rec-item h4{font-size:.85rem;font-weight:600;margin-bottom:.25rem}.rec-item p{font-size:.8rem;color:#94a3b8}
+.badge{padding:.2rem .6rem;border-radius:20px;font-size:.65rem;font-weight:600}
+.badge-high{background:rgba(239,68,68,.15);color:#f87171}.badge-med{background:rgba(245,158,11,.15);color:#fbbf24}.badge-low{background:rgba(34,197,94,.15);color:#4ade80}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.15;pointer-events:none}
+.orb1{width:350px;height:350px;background:#10b981;top:-80px;right:-80px}.orb2{width:250px;height:250px;background:#06b6d4;bottom:-50px;left:200px}
+.success-msg{padding:.75rem 1rem;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:10px;color:#34d399;font-size:.85rem;display:none;margin-top:1rem}
+</style></head><body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<aside class="sidebar">
+<div class="logo"><div class="ic"><i class="fas fa-chalkboard-teacher"></i></div><span>Teacher Panel</span></div>
+<nav class="nav">
+<a href="#" class="active" onclick="showT('mytimetable')"><i class="fas fa-calendar"></i>My Timetable</a>
+<a href="#" onclick="showT('attendance')"><i class="fas fa-clipboard-check"></i>Mark Attendance</a>
+<a href="#" onclick="showT('records')"><i class="fas fa-list-check"></i>Attendance Records</a>
+<a href="#" onclick="showT('recommendations')"><i class="fas fa-lightbulb"></i>AI Recommendations</a>
+<a href="#" onclick="showT('notifications')"><i class="fas fa-bell"></i>Notifications</a>
+</nav>
+<div class="user-box"><div class="avatar" id="uA">T</div><div class="info"><div class="name" id="uN">Teacher</div><div class="role">Teacher</div></div>
+<i class="fas fa-sign-out-alt" style="color:#64748b;cursor:pointer" onclick="logout()"></i></div>
+</aside>
+<div class="main">
+<div class="header"><h2 id="pT">My Timetable</h2></div>
+<div class="content">
+
+<!-- My Timetable - Grid Format -->
+<div class="section active" id="sec-mytimetable">
+<div class="card"><h3><i class="fas fa-calendar-alt"></i>Weekly Teaching Schedule</h3>
+<div class="tt-grid" id="ttGrid"></div>
+</div></div>
+
+<!-- Mark Attendance -->
+<div class="section" id="sec-attendance">
+<div class="card"><h3><i class="fas fa-clipboard-check"></i>Mark Attendance</h3>
+<div class="att-filters">
+<div class="fg"><label>Subject</label><select id="attSubject"><option value="">Select Subject</option></select></div>
+<div class="fg"><label>Grade</label><select id="attGrade"><option value="1st Year">1st Year</option><option value="2nd Year">2nd Year</option><option value="3rd Year">3rd Year</option></select></div>
+<div class="fg"><label>Section</label><select id="attSection"><option value="A">A</option><option value="B">B</option></select></div>
+<div class="fg"><label>Date</label><input type="date" id="attDate"></div>
+<button class="btn-load" onclick="loadStudentsForAtt()"><i class="fas fa-users"></i> Load Students</button>
+</div>
+<div id="attStudentList"></div>
+<div id="attSuccess" class="success-msg"><i class="fas fa-check-circle"></i> Attendance marked successfully!</div>
+</div></div>
+
+<!-- Attendance Records -->
+<div class="section" id="sec-records">
+<div class="card"><h3><i class="fas fa-list-check"></i>Attendance Records</h3>
+<table class="stu-table"><thead><tr><th>Student</th><th>Subject</th><th>Date</th><th>Status</th></tr></thead><tbody id="attRecords"></tbody></table>
+</div></div>
+
+<!-- AI Recommendations -->
+<div class="section" id="sec-recommendations">
+<div class="card"><h3><i class="fas fa-lightbulb"></i>AI Recommendations</h3><div id="tRecList"></div></div>
+</div>
+
+<!-- Notifications -->
+<div class="section" id="sec-notifications">
+<div class="card"><h3><i class="fas fa-bell"></i>Notifications</h3><div id="tNotifList"></div></div>
+</div>
+
+</div></div>
+<script>
+if(!localStorage.getItem('token')||localStorage.getItem('userRole')!=='TEACHER'){window.location.href='/';}
+const tName=localStorage.getItem('userName')||'Teacher';
+document.getElementById('uN').textContent=tName;document.getElementById('uA').textContent=tName[0];
+document.getElementById('attDate').valueAsDate=new Date();
+
+function logout(){localStorage.clear();window.location.href='/';}
+function showT(s){
+  document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));
+  document.getElementById('sec-'+s).classList.add('active');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+  event.target.closest('a').classList.add('active');
+  const t={mytimetable:'My Timetable',attendance:'Mark Attendance',records:'Attendance Records',recommendations:'AI Recommendations',notifications:'Notifications'};
+  document.getElementById('pT').textContent=t[s];
+  if(s==='mytimetable')loadTTGrid();if(s==='attendance')loadSubjects();if(s==='records')loadRecords();if(s==='recommendations')loadRecs();if(s==='notifications')loadNotifs();
+}
+
+// Timetable Grid
+async function loadTTGrid(){
+  const d=await fetch('/api/teacher/timetable?name='+encodeURIComponent(tName)).then(r=>r.json());
+  const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const times=['09:00','10:00','11:00','12:00','14:00','15:00','16:00'];
+  const timeLabels=['9:00-10:00','10:00-11:00','11:00-12:00','12:00-1:00','2:00-3:00','3:00-4:00','4:00-5:00'];
+  let html='<div class="tt-cell tt-header">Time</div>';
+  days.forEach(day=>html+=`<div class="tt-cell tt-header">${day.substring(0,3)}</div>`);
+  times.forEach((time,i)=>{
+    html+=`<div class="tt-cell tt-time">${timeLabels[i]}</div>`;
+    days.forEach(day=>{
+      const cls=d.filter(t=>t.dayOfWeek===day&&t.startTime===time);
+      if(cls.length>0){
+        html+=`<div class="tt-cell">${cls.map(c=>`<div class="tt-class"><div class="subj">${c.subjectName}</div><div class="room">${c.classroomName} | ${c.grade}-${c.section}</div></div>`).join('')}</div>`;
+      } else {
+        html+=`<div class="tt-cell"><div class="tt-empty">—</div></div>`;
+      }
+    });
+  });
+  document.getElementById('ttGrid').innerHTML=html;
+  if(d.length===0) document.getElementById('ttGrid').innerHTML='<div style="padding:2rem;text-align:center;color:#64748b;grid-column:1/-1">No timetable generated yet. Ask admin to generate.</div>';
+}
+
+// Load subjects for attendance dropdown
+async function loadSubjects(){
+  const tt=await fetch('/api/teacher/timetable?name='+encodeURIComponent(tName)).then(r=>r.json());
+  const subjects=[...new Set(tt.map(t=>t.subjectName))];
+  const sel=document.getElementById('attSubject');
+  sel.innerHTML='<option value="">Select Subject</option>'+subjects.map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+
+// Load students for attendance
+async function loadStudentsForAtt(){
+  const subj=document.getElementById('attSubject').value;
+  const grade=document.getElementById('attGrade').value;
+  const section=document.getElementById('attSection').value;
+  const date=document.getElementById('attDate').value;
+  if(!subj||!date){alert('Please select subject and date');return;}
+  const students=await fetch('/api/admin/students').then(r=>r.json());
+  const filtered=students.filter(s=>s.grade===grade&&s.section===section);
+  if(filtered.length===0){document.getElementById('attStudentList').innerHTML='<p style="color:#64748b;padding:1rem">No students found for this grade/section.</p>';return;}
+  let html=`<table class="stu-table"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Present</th></tr></thead><tbody>`;
+  filtered.forEach((s,i)=>{
+    html+=`<tr><td>${i+1}</td><td>${s.name}</td><td>${s.email}</td><td><div class="checkbox-wrap"><input type="checkbox" checked data-name="${s.name}" class="att-check"></div></td></tr>`;
+  });
+  html+=`</tbody></table><button class="btn-submit" onclick="submitAttendance()"><i class="fas fa-save"></i> Submit Attendance for ${filtered.length} students</button>`;
+  document.getElementById('attStudentList').innerHTML=html;
+  document.getElementById('attSuccess').style.display='none';
+}
+
+// Submit attendance
+async function submitAttendance(){
+  const subj=document.getElementById('attSubject').value;
+  const date=document.getElementById('attDate').value;
+  const checks=document.querySelectorAll('.att-check');
+  const promises=[];
+  checks.forEach(ch=>{
+    promises.push(fetch('/api/teacher/attendance',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({studentName:ch.dataset.name,subjectName:subj,teacherName:tName,date:date,present:ch.checked})
+    }));
+  });
+  await Promise.all(promises);
+  document.getElementById('attSuccess').style.display='block';
+  setTimeout(()=>document.getElementById('attSuccess').style.display='none',3000);
+}
+
+// Load attendance records
+async function loadRecords(){
+  const d=await fetch('/api/teacher/attendance?name='+encodeURIComponent(tName)).then(r=>r.json());
+  document.getElementById('attRecords').innerHTML=d.map(a=>
+    `<tr><td>${a.studentName}</td><td>${a.subjectName}</td><td>${a.date}</td><td><span class="${a.present?'present-tag':'absent-tag'}">${a.present?'✓ Present':'✗ Absent'}</span></td></tr>`
+  ).join('')||'<tr><td colspan="4" style="color:#64748b;text-align:center">No records yet</td></tr>';
+}
+
+async function loadRecs(){const d=await fetch('/api/teacher/recommendations').then(r=>r.json());document.getElementById('tRecList').innerHTML=d.map(r=>`<div class="rec-item"><span class="badge ${r.priority==='HIGH'?'badge-high':r.priority==='MEDIUM'?'badge-med':'badge-low'}" style="float:right">${r.priority}</span><h4>${r.title}</h4><p>${r.message}</p></div>`).join('');}
+async function loadNotifs(){const d=await fetch('/api/teacher/notifications?role=TEACHER').then(r=>r.json());document.getElementById('tNotifList').innerHTML=d.map(n=>`<div class="rec-item"><h4>${n.type}</h4><p>${n.message}</p></div>`).join('');}
+loadTTGrid();
+</script></body></html>

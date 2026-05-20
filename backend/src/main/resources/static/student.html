@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Student Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:#0f172a;color:#f8fafc;display:flex;min-height:100vh}
+.sidebar{width:260px;background:rgba(30,41,59,.8);backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;position:fixed;height:100vh}
+.sidebar .logo{padding:1.5rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar .logo .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center}
+.sidebar .logo .ic i{color:#fff}.sidebar .logo span{font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav{flex:1;padding:1rem .75rem}.nav a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:12px;color:#94a3b8;text-decoration:none;font-weight:500;font-size:.9rem;margin-bottom:4px;transition:all .2s;border:1px solid transparent}
+.nav a:hover,.nav a.active{background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.3)}
+.nav a i{width:20px;text-align:center}
+.user-box{padding:1rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:.75rem}
+.user-box .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem}
+.user-box .info .name{font-size:.85rem;font-weight:600}.user-box .info .role{font-size:.7rem;color:#64748b}
+.main{flex:1;margin-left:260px}.header{padding:1.5rem 2rem;background:rgba(30,41,59,.6);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.header h2{font-size:1.5rem;font-weight:700}.content{padding:2rem}
+.card{background:rgba(30,41,59,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.card h3 i{color:#f59e0b}
+.section{display:none}.section.active{display:block}
+.tt-grid{display:grid;grid-template-columns:100px repeat(5,1fr);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+.tt-cell{padding:.6rem;border:1px solid rgba(255,255,255,.05);font-size:.75rem;min-height:60px;display:flex;flex-direction:column;justify-content:center}
+.tt-header{background:rgba(245,158,11,.1);color:#fbbf24;font-weight:700;text-align:center;font-size:.8rem}
+.tt-time{background:rgba(255,255,255,.03);color:#94a3b8;font-weight:600;text-align:center;font-size:.75rem}
+.tt-class{background:rgba(245,158,11,.08);border-radius:8px;padding:.4rem;margin:2px}
+.tt-class .subj{font-weight:600;color:#e2e8f0;font-size:.75rem}.tt-class .room{color:#64748b;font-size:.65rem;margin-top:2px}
+.tt-empty{color:#334155;text-align:center;font-size:.7rem}
+table{width:100%;border-collapse:collapse}th,td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);font-size:.85rem}
+th{color:#94a3b8;font-weight:600;font-size:.75rem;text-transform:uppercase}
+.present-tag{color:#4ade80;font-weight:600}.absent-tag{color:#f87171;font-weight:600}
+.att-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.att-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.25rem;text-align:center}
+.att-stat .val{font-size:2rem;font-weight:800;margin-top:.25rem}
+.att-stat .label{font-size:.75rem;color:#94a3b8;font-weight:500}
+.rec-item{padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:.75rem}
+.rec-item h4{font-size:.85rem;font-weight:600;margin-bottom:.25rem}.rec-item p{font-size:.8rem;color:#94a3b8}
+.voice-box{text-align:center;padding:3rem}
+.voice-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;cursor:pointer;box-shadow:0 0 30px rgba(245,158,11,.4);transition:all .3s;margin-bottom:1.5rem}
+.voice-btn:hover{transform:scale(1.1);box-shadow:0 0 50px rgba(245,158,11,.6)}.voice-btn i{font-size:2rem;color:#fff}
+.future-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.future-card{padding:1.5rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;text-align:center;opacity:.6}
+.future-card i{font-size:2rem;margin-bottom:.75rem;color:#64748b}.future-card h4{font-size:.85rem;margin-bottom:.25rem}.future-card p{font-size:.75rem;color:#64748b}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.15;pointer-events:none}
+.orb1{width:350px;height:350px;background:#f59e0b;top:-80px;right:-80px}.orb2{width:250px;height:250px;background:#ef4444;bottom:-50px;left:200px}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.room-card{padding:1.25rem;border-radius:14px;border:1px solid rgba(255,255,255,.08);transition:all .3s}
+.room-card.free{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25)}
+.room-card.occupied{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);opacity:.6}
+.room-card .room-name{font-weight:700;font-size:.95rem;margin-bottom:.25rem}
+.room-card .room-info{font-size:.75rem;color:#94a3b8}
+.room-card .room-status{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.65rem;font-weight:700;margin-top:.5rem}
+.room-card.free .room-status{background:rgba(34,197,94,.2);color:#4ade80}
+.room-card.occupied .room-status{background:rgba(239,68,68,.2);color:#f87171}
+.free-filters{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:end;flex-wrap:wrap}
+.free-filters .fg{display:flex;flex-direction:column;gap:.4rem}
+.free-filters label{font-size:.75rem;color:#94a3b8;font-weight:600;text-transform:uppercase}
+.free-filters select{padding:.6rem 1rem;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f8fafc;font-family:'Inter';font-size:.85rem;outline:none}
+.btn-check{padding:.6rem 1.5rem;background:#10b981;border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-family:'Inter';font-size:.85rem;height:fit-content}
+</style></head><body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<aside class="sidebar">
+<div class="logo"><div class="ic"><i class="fas fa-user-graduate"></i></div><span>Student Panel</span></div>
+<nav class="nav">
+<a href="#" class="active" onclick="showS('mytimetable')"><i class="fas fa-calendar"></i>My Timetable</a>
+<a href="#" onclick="showS('freerooms')"><i class="fas fa-door-open"></i>Free Classrooms</a>
+<a href="#" onclick="showS('attendance')"><i class="fas fa-clipboard-check"></i>My Attendance</a>
+<a href="#" onclick="showS('notifications')"><i class="fas fa-bell"></i>Notifications</a>
+<a href="#" onclick="showS('voice')"><i class="fas fa-microphone"></i>Voice Assistant</a>
+<a href="#" onclick="showS('future')"><i class="fas fa-rocket"></i>Future Features</a>
+</nav>
+<div class="user-box"><div class="avatar" id="uA">S</div><div class="info"><div class="name" id="uN">Student</div><div class="role">Student</div></div>
+<i class="fas fa-sign-out-alt" style="color:#64748b;cursor:pointer" onclick="logout()"></i></div>
+</aside>
+<div class="main">
+<div class="header"><h2 id="pT">My Timetable</h2></div>
+<div class="content">
+
+<!-- Timetable Grid -->
+<div class="section active" id="sec-mytimetable">
+<div class="card"><h3><i class="fas fa-calendar-alt"></i>My Weekly Schedule</h3>
+<div class="tt-grid" id="ttGrid"></div></div></div>
+
+<!-- Free Classrooms -->
+<div class="section" id="sec-freerooms">
+<div class="att-summary">
+<div class="att-stat"><div class="label">Free Rooms</div><div class="val" id="freeCount" style="color:#4ade80">0</div></div>
+<div class="att-stat"><div class="label">Occupied</div><div class="val" id="occCount" style="color:#f87171">0</div></div>
+<div class="att-stat"><div class="label">Total Rooms</div><div class="val" id="totalRooms" style="color:#60a5fa">0</div></div>
+</div>
+<div class="card"><h3><i class="fas fa-door-open"></i>Find Free Classrooms</h3>
+<div class="free-filters">
+<div class="fg"><label>Day</label><select id="frDay"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option></select></div>
+<div class="fg"><label>Time Slot</label><select id="frTime"><option value="09:00">9:00 AM</option><option value="10:00">10:00 AM</option><option value="11:00">11:00 AM</option><option value="12:00">12:00 PM</option><option value="14:00">2:00 PM</option><option value="15:00">3:00 PM</option><option value="16:00">4:00 PM</option></select></div>
+<button class="btn-check" onclick="loadFreeRooms()"><i class="fas fa-search"></i> Check Availability</button>
+</div>
+<div class="room-grid" id="roomGrid"></div>
+</div></div>
+
+<!-- Attendance -->
+<div class="section" id="sec-attendance">
+<div class="att-summary">
+<div class="att-stat"><div class="label">Total Classes</div><div class="val" id="attTotal" style="color:#60a5fa">0</div></div>
+<div class="att-stat"><div class="label">Present</div><div class="val" id="attPres" style="color:#4ade80">0</div></div>
+<div class="att-stat"><div class="label">Attendance %</div><div class="val" id="attPct" style="color:#fbbf24">0%</div></div>
+</div>
+<div class="card"><h3><i class="fas fa-clipboard-check"></i>Attendance Records</h3>
+<table><thead><tr><th>Subject</th><th>Teacher</th><th>Date</th><th>Status</th></tr></thead><tbody id="attList"></tbody></table></div></div>
+
+<!-- Notifications -->
+<div class="section" id="sec-notifications">
+<div class="card"><h3><i class="fas fa-bell"></i>Smart Notifications</h3><div id="sNotifList"></div></div></div>
+
+<!-- Voice -->
+<div class="section" id="sec-voice">
+<div class="card"><div class="voice-box">
+<button class="voice-btn" onclick="voiceAsk()"><i class="fas fa-microphone"></i></button>
+<h3 style="margin-bottom:.5rem">AI Voice Assistant</h3>
+<p style="color:#94a3b8;margin-bottom:1.5rem">"Hey SmartClass, show me my timetable"</p>
+<div id="voiceResult" style="text-align:left"></div>
+<div style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+<button onclick="voiceCmd('timetable')" style="padding:.5rem 1rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#fbbf24;cursor:pointer;font-family:'Inter';font-size:.8rem">Show my timetable</button>
+<button onclick="voiceCmd('next')" style="padding:.5rem 1rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#fbbf24;cursor:pointer;font-family:'Inter';font-size:.8rem">Next lecture</button>
+<button onclick="voiceCmd('attendance')" style="padding:.5rem 1rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:8px;color:#fbbf24;cursor:pointer;font-family:'Inter';font-size:.8rem">My attendance</button>
+</div></div></div></div>
+
+<!-- Future -->
+<div class="section" id="sec-future">
+<div class="card"><h3><i class="fas fa-rocket"></i>Future Ready Features</h3>
+<div class="future-grid">
+<div class="future-card"><i class="fas fa-vr-cardboard"></i><h4>AR Classroom Navigation</h4><p>Coming Soon</p></div>
+<div class="future-card"><i class="fas fa-wifi"></i><h4>IoT Smart Attendance</h4><p>Coming Soon</p></div>
+<div class="future-card"><i class="fas fa-face-smile"></i><h4>Face Recognition</h4><p>Coming Soon</p></div>
+<div class="future-card"><i class="fas fa-robot"></i><h4>AI Chatbot</h4><p>Coming Soon</p></div>
+<div class="future-card"><i class="fas fa-cube"></i><h4>Digital Twin</h4><p>Coming Soon</p></div>
+<div class="future-card"><i class="fas fa-fingerprint"></i><h4>Biometric Auth</h4><p>Coming Soon</p></div>
+</div></div></div>
+
+</div></div>
+<script>
+if(!localStorage.getItem('token')||localStorage.getItem('userRole')!=='STUDENT'){window.location.href='/';}
+const sName=localStorage.getItem('userName')||'Student';
+document.getElementById('uN').textContent=sName;document.getElementById('uA').textContent=sName[0];
+function logout(){localStorage.clear();window.location.href='/';}
+function showS(s){document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));document.getElementById('sec-'+s).classList.add('active');document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));event.target.closest('a').classList.add('active');
+const t={mytimetable:'My Timetable',freerooms:'Free Classrooms',attendance:'My Attendance',notifications:'Notifications',voice:'Voice Assistant',future:'Future Features'};document.getElementById('pT').textContent=t[s];
+if(s==='mytimetable')loadTTGrid();if(s==='freerooms')loadFreeRooms();if(s==='attendance')loadAtt();if(s==='notifications')loadNotifs();}
+
+async function loadTTGrid(){
+  const d=await fetch('/api/student/timetable?grade=1st Year&section=A').then(r=>r.json());
+  const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const times=['09:00','10:00','11:00','12:00','14:00','15:00','16:00'];
+  const timeLabels=['9:00-10:00','10:00-11:00','11:00-12:00','12:00-1:00','2:00-3:00','3:00-4:00','4:00-5:00'];
+  let html='<div class="tt-cell tt-header">Time</div>';
+  days.forEach(day=>html+=`<div class="tt-cell tt-header">${day.substring(0,3)}</div>`);
+  times.forEach((time,i)=>{
+    html+=`<div class="tt-cell tt-time">${timeLabels[i]}</div>`;
+    days.forEach(day=>{
+      const cls=d.filter(t=>t.dayOfWeek===day&&t.startTime===time);
+      if(cls.length>0){html+=`<div class="tt-cell">${cls.map(c=>`<div class="tt-class"><div class="subj">${c.subjectName}</div><div class="room">${c.teacherName}<br>${c.classroomName}</div></div>`).join('')}</div>`;}
+      else{html+=`<div class="tt-cell"><div class="tt-empty">—</div></div>`;}
+    });
+  });
+  document.getElementById('ttGrid').innerHTML=html;
+  if(d.length===0) document.getElementById('ttGrid').innerHTML='<div style="padding:2rem;text-align:center;color:#64748b;grid-column:1/-1">No timetable generated yet.</div>';
+}
+
+async function loadAtt(){
+  const d=await fetch('/api/student/attendance?name='+encodeURIComponent(sName)).then(r=>r.json());
+  const total=d.length;const present=d.filter(a=>a.present).length;
+  document.getElementById('attTotal').textContent=total;
+  document.getElementById('attPres').textContent=present;
+  document.getElementById('attPct').textContent=total>0?Math.round(present/total*100)+'%':'N/A';
+  document.getElementById('attList').innerHTML=d.map(a=>
+    `<tr><td>${a.subjectName}</td><td>${a.teacherName}</td><td>${a.date}</td><td><span class="${a.present?'present-tag':'absent-tag'}">${a.present?'✓ Present':'✗ Absent'}</span></td></tr>`
+  ).join('')||'<tr><td colspan="4" style="color:#64748b;text-align:center">No attendance records yet</td></tr>';
+}
+
+async function loadNotifs(){const d=await fetch('/api/student/notifications?role=STUDENT').then(r=>r.json());document.getElementById('sNotifList').innerHTML=d.map(n=>`<div class="rec-item"><h4>${n.type}</h4><p>${n.message}</p></div>`).join('');}
+function voiceAsk(){document.getElementById('voiceResult').innerHTML='<div class="rec-item"><h4>Listening...</h4><p>Try the quick commands below.</p></div>';}
+async function voiceCmd(cmd){
+  const el=document.getElementById('voiceResult');
+  if(cmd==='timetable'){const d=await fetch('/api/student/timetable?grade=1st Year&section=A').then(r=>r.json());el.innerHTML=d.length?d.slice(0,5).map(t=>`<div class="rec-item"><h4>${t.dayOfWeek} ${t.startTime}</h4><p>${t.subjectName} — ${t.teacherName} — ${t.classroomName}</p></div>`).join(''):'<div class="rec-item"><p>No timetable yet.</p></div>';}
+  else if(cmd==='next'){el.innerHTML='<div class="rec-item"><h4>Next Lecture</h4><p>Data Structures at 10:00 AM in Room 101</p></div>';}
+  else if(cmd==='attendance'){const d=await fetch('/api/student/attendance?name='+encodeURIComponent(sName)).then(r=>r.json());const t=d.length;const p=d.filter(a=>a.present).length;el.innerHTML=`<div class="rec-item"><h4>Your Attendance</h4><p>Total: ${t} | Present: ${p} | Percentage: ${t>0?Math.round(p/t*100):0}%</p></div>`;}
+}
+async function loadFreeRooms(){
+  const day=document.getElementById('frDay').value;
+  const time=document.getElementById('frTime').value;
+  try {
+    const resp=await fetch('/api/ai/freeClassrooms?day='+encodeURIComponent(day)+'&time='+encodeURIComponent(time));
+    const d=await resp.json();
+    const rooms=d.rooms||[];
+    const fc=Number(d.freeCount)||0;
+    const tc=Number(d.totalCount)||0;
+    document.getElementById('freeCount').textContent=fc;
+    document.getElementById('occCount').textContent=tc-fc;
+    document.getElementById('totalRooms').textContent=tc;
+    // Sort: free rooms first, occupied last
+    rooms.sort((a,b)=>(a.free===b.free)?0:(a.free?-1:1));
+    document.getElementById('roomGrid').innerHTML=rooms.map(r=>{
+      const isFree=(r.free===true||r.free==='true');
+      return `<div class="room-card ${isFree?'free':'occupied'}">
+        <div class="room-name">${isFree?'\ud83d\udfe2':'\ud83d\udd34'} ${r.name}</div>
+        <div class="room-info">Capacity: ${r.capacity} | Type: ${r.type||'N/A'}</div>
+        <div class="room-info">${r.building||''} ${r.floor?'Floor '+r.floor:''}</div>
+        <div class="room-status">${isFree?'\u2713 AVAILABLE \u2014 Study Here':'\u2717 OCCUPIED'}</div>
+      </div>`;
+    }).join('');
+    if(rooms.length===0) document.getElementById('roomGrid').innerHTML='<p style="color:#64748b">No rooms found. Generate timetable from Admin panel first.</p>';
+  } catch(e) {
+    document.getElementById('roomGrid').innerHTML='<p style="color:#f87171">Error loading rooms. Make sure timetable is generated.</p>';
+  }
+}
+loadTTGrid();
+</script></body></html>

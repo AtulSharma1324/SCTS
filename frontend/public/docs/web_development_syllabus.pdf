@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> >>
+endobj
+4 0 obj
+<< /Length 595 >>
+stream
+BT
+/F1 16 Tf
+50 700 Td
+(SCTS - WEB DEVELOPMENT SYLLABUS) Tj
+/F1 10 Tf
+0 -30 Td
+(Course Code: CS-403 | Core Elective | Credits: 3) Tj
+0 -20 Td
+(Course Overview: Frontend technologies, server frameworks, and database persistence.) Tj
+0 -20 Td
+(Unit 1: HTML5 Semantics, Responsive CSS, Layouts - Flexbox and Grid Systems.) Tj
+0 -20 Td
+(Unit 2: Client-side JS, DOM Manipulation, Async Fetch API, ES6 standard syntax.) Tj
+0 -20 Td
+(Unit 3: Modern UI Component Frameworks - React, Next.js, and State Context.) Tj
+0 -20 Td
+(Unit 4: Server REST APIs, Node.js, Express, Middleware, and JWT Security.) Tj
+0 -30 Td
+(Reference Books:) Tj
+0 -15 Td
+(1. JavaScript: The Definitive Guide - David Flanagan) Tj
+0 -15 Td
+(2. Fullstack React - Accompanied by Next.js Guides) Tj
+ET
+endstream
+endobj
+xref
+0 5
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000244 00000 n 
+trailer
+<< /Size 5 /Root 1 0 R >>
+startxref
+895
+%%EOF
